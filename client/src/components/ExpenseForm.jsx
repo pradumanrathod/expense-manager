@@ -51,7 +51,7 @@ export default function ExpenseForm({ isOpen, onClose, categories, onSuccess }) 
 
       // Then create expense
       await expensesAPI.create(data);
-      toast.success('Expense added successfully');
+      toast.success('Expense added successfully 🎉');
       onSuccess();
       onClose();
     } catch (error) {
@@ -65,26 +65,26 @@ export default function ExpenseForm({ isOpen, onClose, categories, onSuccess }) 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="glass rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scale-in max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Add Expense</h2>
+          <h2 className="text-2xl font-bold text-gray-800">Add Expense 💸</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl"
+            className="text-gray-500 hover:text-gray-700 text-3xl transition-transform duration-300 hover:rotate-90"
           >
             ×
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <div className="animate-slide-up">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Category *
             </label>
             <select
               {...register('categoryId', { required: 'Category is required' })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 font-medium"
             >
               <option value="">Select category</option>
               {categories.map((cat) => (
@@ -94,12 +94,12 @@ export default function ExpenseForm({ isOpen, onClose, categories, onSuccess }) 
               ))}
             </select>
             {errors.categoryId && (
-              <p className="text-red-500 text-xs mt-1">{errors.categoryId.message}</p>
+              <p className="text-red-500 text-xs mt-1 animate-slide-down">{errors.categoryId.message}</p>
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="animate-slide-up" style={{ animationDelay: '100ms' }}>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Amount (₹) *
             </label>
             <input
@@ -110,57 +110,67 @@ export default function ExpenseForm({ isOpen, onClose, categories, onSuccess }) 
                 required: 'Amount is required',
                 min: { value: 0.01, message: 'Amount must be greater than 0' },
               })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 font-medium"
+              placeholder="0.00"
             />
             {errors.amount && (
-              <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>
+              <p className="text-red-500 text-xs mt-1 animate-slide-down">{errors.amount.message}</p>
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Date *
             </label>
             <input
               type="date"
               {...register('date', { required: 'Date is required' })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 font-medium"
             />
             {errors.date && (
-              <p className="text-red-500 text-xs mt-1">{errors.date.message}</p>
+              <p className="text-red-500 text-xs mt-1 animate-slide-down">{errors.date.message}</p>
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="animate-slide-up" style={{ animationDelay: '300ms' }}>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Description
             </label>
             <textarea
               {...register('description')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 resize-none"
               placeholder="Optional description..."
             />
           </div>
 
           {budgetStatus && budgetStatus.hasBudget && (
             <div
-              className={`p-3 rounded-lg ${
+              className={`p-4 rounded-xl border-2 animate-slide-up ${
                 budgetStatus.withinBudget
-                  ? 'bg-green-50 border border-green-200'
-                  : 'bg-red-50 border border-red-200'
+                  ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300'
+                  : 'bg-gradient-to-r from-red-50 to-rose-50 border-red-300'
               }`}
+              style={{ animationDelay: '400ms' }}
             >
-              <p className="text-sm font-medium">
+              <p className={`text-sm font-bold mb-2 ${
+                budgetStatus.withinBudget ? 'text-green-700' : 'text-red-700'
+              }`}>
                 {budgetStatus.withinBudget ? '✅ Within Budget' : '⚠️ Over Budget'}
               </p>
-              <p className="text-xs text-gray-600 mt-1">
-                Spent: {formatCurrency(budgetStatus.newTotal)} /{' '}
-                {formatCurrency(budgetStatus.budget)}
-              </p>
-              <p className="text-xs text-gray-600">
-                Remaining: {formatCurrency(budgetStatus.remaining)}
-              </p>
+              <div className="text-xs text-gray-600 space-y-1">
+                <p>
+                  Spent: <span className="font-semibold">{formatCurrency(budgetStatus.newTotal)}</span> /{' '}
+                  <span className="font-semibold">{formatCurrency(budgetStatus.budget)}</span>
+                </p>
+                <p>
+                  Remaining: <span className={`font-bold ${
+                    budgetStatus.remaining >= 0 ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                    {formatCurrency(budgetStatus.remaining)}
+                  </span>
+                </p>
+              </div>
             </div>
           )}
 
@@ -168,14 +178,14 @@ export default function ExpenseForm({ isOpen, onClose, categories, onSuccess }) 
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 font-semibold transition-all duration-300"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={checkingBudget}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
             >
               {checkingBudget ? 'Checking...' : 'Add Expense'}
             </button>
@@ -185,4 +195,3 @@ export default function ExpenseForm({ isOpen, onClose, categories, onSuccess }) 
     </div>
   );
 }
-

@@ -17,7 +17,7 @@ export default function Categories() {
     try {
       setLoading(true);
       const response = await categoriesAPI.getAll();
-      setCategories(response.data);
+      setCategories(response.data || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
       toast.error('Failed to load categories');
@@ -27,9 +27,7 @@ export default function Categories() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this category?')) {
-      return;
-    }
+    if (!window.confirm('Are you sure you want to delete this category?')) return;
 
     try {
       await categoriesAPI.delete(id);
@@ -49,83 +47,77 @@ export default function Categories() {
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center">Loading...</div>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mb-4"></div>
+            <p className="text-white text-lg font-medium">Loading categories...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 md:py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Categories</h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 animate-slide-down">
+      
         <button
           onClick={() => {
             setEditingCategory(null);
             setShowForm(true);
           }}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
         >
           + Add Category
         </button>
       </div>
 
       {categories.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg shadow">
-          <p className="text-gray-600 mb-4">No categories yet</p>
+        <div className="text-center py-16 glass rounded-2xl shadow-xl animate-scale-in">
+          <div className="text-6xl mb-4">📁</div>
+          <p className="text-white-700 text-lg font-medium mb-4">No categories yet</p>
           <button
             onClick={() => setShowForm(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
           >
             Create First Category
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Category
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {categories.map((category) => (
-                  <tr key={category._id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div
-                          className="w-4 h-4 rounded-full mr-3"
-                          style={{ backgroundColor: category.color }}
-                        />
-                        <span className="text-sm font-medium text-gray-900">
-                          {category.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => handleEdit(category)}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(category._id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          {categories.map((category, index) => (
+            <div
+              key={category._id}
+              className="glass rounded-2xl p-6 shadow-xl card-hover animate-slide-up"
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div
+                    className="w-6 h-6 rounded-full mr-3 shadow-md"
+                    style={{
+                      backgroundColor: category.color || '#6C5CE7', // fallback color
+                    }}
+                  />
+                  <span className="text-lg font-bold text-white-800">{category.name}</span>
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => handleEdit(category)}
+                    className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 font-medium transition-colors duration-300"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(category._id)}
+                    className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-medium transition-colors duration-300"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -145,7 +137,9 @@ export default function Categories() {
 
 function CategoryForm({ category, onClose, onSuccess }) {
   const [name, setName] = useState(category?.name || '');
-  const [color, setColor] = useState(category?.color || CATEGORY_COLORS[0]);
+  const [color, setColor] = useState(
+    category?.color && category.color !== '' ? category.color : CATEGORY_COLORS[0]
+  );
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -155,13 +149,15 @@ function CategoryForm({ category, onClose, onSuccess }) {
       return;
     }
 
+    const finalColor = color || CATEGORY_COLORS[0];
+
     try {
       setLoading(true);
       if (category) {
-        await categoriesAPI.update(category._id, { name, color });
+        await categoriesAPI.update(category._id, { name, color: finalColor });
         toast.success('Category updated');
       } else {
-        await categoriesAPI.create({ name, color });
+        await categoriesAPI.create({ name, color: finalColor });
         toast.success('Category created');
       }
       onSuccess();
@@ -175,57 +171,61 @@ function CategoryForm({ category, onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="glass rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scale-in">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">
+          <h2 className="text-2xl font-bold text-white">
             {category ? 'Edit Category' : 'Add Category'}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl"
+            className="text-white-500 hover:text-white-700 text-3xl transition-transform duration-300 hover:rotate-90"
           >
             ×
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-white-700 mb-2">
               Category Name *
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border-2 border-white-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300"
               placeholder="e.g., Food, Transport, Entertainment"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-white-700 mb-3">
               Color *
             </label>
-            <div className="flex flex-wrap gap-2">
+
+            <div className="flex flex-wrap gap-3 mb-3">
               {CATEGORY_COLORS.map((c) => (
                 <button
                   key={c}
                   type="button"
                   onClick={() => setColor(c)}
-                  className={`w-10 h-10 rounded-lg border-2 ${
-                    color === c ? 'border-gray-800 scale-110' : 'border-gray-300'
+                  className={`w-12 h-12 rounded-xl border-2 transition-all duration-300 ${
+                    color === c
+                      ? 'border-white-800 scale-110 shadow-lg ring-2 ring-purple-500'
+                      : 'border-white-300 hover:scale-105'
                   }`}
                   style={{ backgroundColor: c }}
                 />
               ))}
             </div>
+
             <input
               type="color"
               value={color}
               onChange={(e) => setColor(e.target.value)}
-              className="mt-2 w-full h-10 rounded-lg border border-gray-300 cursor-pointer"
+              className="w-full h-12 rounded-xl border-2 border-white-300 cursor-pointer transition-all duration-300"
             />
           </div>
 
@@ -233,14 +233,14 @@ function CategoryForm({ category, onClose, onSuccess }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              className="flex-1 px-4 py-3 border-2 border-white-300 rounded-xl text-white-700 hover:bg-white-50 font-semibold transition-all duration-300"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
             >
               {loading ? 'Saving...' : category ? 'Update' : 'Create'}
             </button>
@@ -250,4 +250,3 @@ function CategoryForm({ category, onClose, onSuccess }) {
     </div>
   );
 }
-

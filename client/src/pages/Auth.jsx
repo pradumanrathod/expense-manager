@@ -24,7 +24,7 @@ export default function Auth() {
 
       const { token, user } = response.data;
       login(user, token);
-      toast.success(isLogin ? 'Logged in successfully!' : 'Account created successfully!');
+      toast.success(isLogin ? 'Logged in successfully! 🎉' : 'Account created successfully! 🎉');
       navigate('/');
     } catch (error) {
       console.error('Auth error:', error);
@@ -38,27 +38,28 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 animate-fade-in">
+      <div className="glass rounded-3xl shadow-2xl p-8 md:p-10 w-full max-w-md animate-scale-in">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            💰 Expense Tracker
+          <div className="text-6xl mb-4 animate-bounce-slow">💰</div>
+          <h1 className="text-4xl font-bold gradient-text mb-2">
+            Expense Tracker
           </h1>
-          <p className="text-gray-600">
-            {isLogin ? 'Welcome back!' : 'Create your account'}
+          <p className="text-gray-600 font-medium">
+            {isLogin ? 'Welcome back! 👋' : 'Create your account 🚀'}
           </p>
         </div>
 
-        <div className="flex border-b mb-6">
+        <div className="flex border-b mb-6 bg-gray-100 rounded-t-lg overflow-hidden">
           <button
             onClick={() => {
               setIsLogin(true);
               reset();
             }}
-            className={`flex-1 py-2 text-center font-medium ${
+            className={`flex-1 py-3 text-center font-semibold transition-all duration-300 ${
               isLogin
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
+                : 'text-gray-600 hover:text-purple-600'
             }`}
           >
             Log In
@@ -68,36 +69,36 @@ export default function Auth() {
               setIsLogin(false);
               reset();
             }}
-            className={`flex-1 py-2 text-center font-medium ${
+            className={`flex-1 py-3 text-center font-semibold transition-all duration-300 ${
               !isLogin
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
+                : 'text-gray-600 hover:text-purple-600'
             }`}
           >
             Sign Up
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {!isLogin && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="animate-slide-up">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Name *
               </label>
               <input
                 type="text"
                 {...register('name', { required: 'Name is required' })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300"
                 placeholder="Enter your name"
               />
               {errors.name && (
-                <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
+                <p className="text-red-500 text-xs mt-1 animate-slide-down">{errors.name.message}</p>
               )}
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="animate-slide-up" style={{ animationDelay: '100ms' }}>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Email *
             </label>
             <input
@@ -109,16 +110,16 @@ export default function Auth() {
                   message: 'Invalid email address',
                 },
               })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300"
               placeholder="Enter your email"
             />
             {errors.email && (
-              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+              <p className="text-red-500 text-xs mt-1 animate-slide-down">{errors.email.message}</p>
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Password *
             </label>
             <input
@@ -130,17 +131,18 @@ export default function Auth() {
                   message: 'Password must be at least 6 characters',
                 },
               })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300"
               placeholder="Enter your password"
             />
             {errors.password && (
-              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+              <p className="text-red-500 text-xs mt-1 animate-slide-down">{errors.password.message}</p>
             )}
           </div>
 
           <button
             type="submit"
-            className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-slide-up"
+            style={{ animationDelay: '300ms' }}
           >
             {isLogin ? 'Log In' : 'Sign Up'}
           </button>
@@ -150,7 +152,7 @@ export default function Auth() {
           {isLogin ? "Don't have an account? " : 'Already have an account? '}
           <button
             onClick={switchMode}
-            className="text-blue-600 hover:text-blue-700 font-medium"
+            className="text-purple-600 hover:text-purple-700 font-bold transition-colors duration-300"
           >
             {isLogin ? 'Sign Up' : 'Log In'}
           </button>
@@ -159,4 +161,3 @@ export default function Auth() {
     </div>
   );
 }
-

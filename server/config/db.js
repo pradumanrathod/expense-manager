@@ -1,41 +1,49 @@
 import mongoose from 'mongoose';
 
-let cached = global.mongoose;
+export const connectDB = async () => {
+  try {
+    // Check if MONGODB_URI is set
+    if (!process.env.MONGODB_URI) {
+      console.error('❌ MONGODB_URI is not defined in environment variables');
+      process.exit(1);
+    }
 
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
-export async function connectDB() {
-  const MONGODB_URI = process.env.MONGODB_URI;
-
-  if (!MONGODB_URI) {
-    throw new Error('Please define MONGODB_URI environment variable');
-  }
-
-  // If connection already exists, return it
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  // If connection is in progress, wait for it
-  if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
+    // Set connection options
+    const options = {
+      // Remove deprecated warnings
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose;
+    // Connect to MongoDB
+    const conn = await mongoose.connect(process.env.MONGODB_URI, options);
+
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+
+    // Connection event listeners
+    mongoose.connection.on('error', (err) => {
+      console.error('❌ MongoDB connection error:', err);
     });
-  }
 
-  try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    throw e;
-  }
+    mongoose.connection.on('disconnected', () => {
+      console.warn('⚠️  MongoDB disconnected');
+    });
 
-  return cached.conn;
-}
+    mongoose.connection.on('reconnected', () => {
+      console.log('✅ MongoDB reconnected');
+    });
+
+    // Handle process termination
+    process.on('SIGINT', async () => {
+      await mongoose.connection.close();
+      console.log('MongoDB connection closed due to app termination');
+      process.exit(0);
+    });
+
+  } catch (error) {
+    console.error('❌ MongoDB connection failed:', error.message);
+    console.error('Error details:', error);
+    process.exit(1);
+  }
+};
 
